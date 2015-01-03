@@ -13,6 +13,8 @@ public class CameraPivotMovement : MonoBehaviour {
 	private Transform target;
 	public float speed = 10;
 
+    public bool camaraActiva = true;
+
 	void Start(){
 			
 		/*GameObject[] ga = GameObject.FindGameObjectsWithTag ("WayPoint");
@@ -34,20 +36,24 @@ public class CameraPivotMovement : MonoBehaviour {
 
 	public void PreviousWayPoint(){
 		actualWayPoint--;
-		if (actualWayPoint <= 0)
-			actualWayPoint = wayPoints.Count;
+		if (actualWayPoint < 0)
+			actualWayPoint = wayPoints.Count-1;
 		
 		target = wayPoints [actualWayPoint];
 	}
 
 	void Update(){
 
-		transform.position = Vector3.Lerp (transform.position, target.position, speed * Time.deltaTime);
-
-		//OJO
-		transform.LookAt (pivot);
+        if (camaraActiva)
+        {
+            transform.position = Vector3.Lerp(transform.position, target.position, speed * Time.deltaTime);
+            //OJO
+            transform.LookAt(pivot);
+        }
 	}
-
-
+    public void SetActive()
+    {
+        camaraActiva = !camaraActiva;
+    }
 
 }

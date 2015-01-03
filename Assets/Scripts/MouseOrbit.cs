@@ -30,8 +30,8 @@ public class MouseOrbit : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void LateUpdate () {
-        if (target)
+	void FixedUpdate () {
+        if (target && camaraActiva)
         {
             x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
             y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
@@ -44,7 +44,10 @@ public class MouseOrbit : MonoBehaviour {
             distancia = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
 
             transform.rotation = rotation;
-            transform.position = Vector3.Lerp(transform.position, position, camSpeed*Time.deltaTime);
+            transform.position = position;
+
+            //ARREGLAR DESPLASAMIENTO LENTO
+            //transform.position = Vector3.Slerp(transform.position, position, camSpeed*Time.deltaTime);
 
         }
 	}
@@ -59,9 +62,9 @@ public class MouseOrbit : MonoBehaviour {
         return Mathf.Clamp(angulo,min,max);
     }
 
-    public void SetActive(bool estaActivado)
+    public void SetActive()
     {
-        camaraActiva = estaActivado;
+        camaraActiva = !camaraActiva;
     }
 
 }
