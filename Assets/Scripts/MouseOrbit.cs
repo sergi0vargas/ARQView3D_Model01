@@ -4,9 +4,15 @@ using System.Collections;
 public class MouseOrbit : MonoBehaviour {
 
     public Transform target;
+
+
     public float distancia = 50;
+    private float lastDist = 0;
+
+
     public float multiplicadorDistancia = 10;
     public float camSpeed = 10;
+    public float pinchSpeed;
 
     public float xSpeed = 200;
     public float ySpeed = 100;
@@ -18,6 +24,8 @@ public class MouseOrbit : MonoBehaviour {
     private float y = 0;
 
     public bool camaraActiva = false;
+
+    private Touch touch;
 
 	// Use this for initialization
 	void Start () {
@@ -31,24 +39,64 @@ public class MouseOrbit : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
         if (target && camaraActiva)
         {
-            x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-            y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+            if (Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+                    y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+                }
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
+                Quaternion rotation = Quaternion.Euler(y, x, 0);
+                Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distancia) + target.position;
 
-            Quaternion rotation = Quaternion.Euler(y, x, 0);
-            Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distancia) + target.position;
+                distancia = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
 
-            distancia = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
+                //ARREGLAR DESPLASAMIENTO LENTO
+                //transform.position = Vector3.Slerp(transform.position, position, camSpeed*Time.deltaTime);
+                transform.rotation = rotation;
+                transform.position = position;
+            }
+            else
+            {
+                if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+                {
+                    //One finger touch does orbit
+                    touch = Input.GetTouch(0);
 
-            transform.rotation = rotation;
-            transform.position = position;
+                    x += touch.deltaPosition.x * xSpeed * 0.02f;
 
-            //ARREGLAR DESPLASAMIENTO LENTO
-            //transform.position = Vector3.Slerp(transform.position, position, camSpeed*Time.deltaTime);
+                    y -= touch.deltaPosition.y * ySpeed * 0.02f;
 
+                }
+
+                if (Input.touchCount > 1 && (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Moved))
+                {
+                    //Two finger touch does pinch to zoom
+                    var touch1 = Input.GetTouch(0);
+
+                    var touch2 = Input.GetTouch(1);
+
+                    distancia = Vector2.Distance(touch1.position, touch2.position);
+
+                    if (distancia > lastDist)
+                    {
+                        distancia += Vector2.Distance(touch1.deltaPosition, touch2.deltaPosition) * pinchSpeed / 10;
+
+                    }
+                    else
+                    {
+                        distancia -= Vector2.Distance(touch1.deltaPosition, touch2.deltaPosition) * pinchSpeed / 10;
+                    }
+                    lastDist = distancia;
+
+                }
+ 
+            }
         }
 	}
 
