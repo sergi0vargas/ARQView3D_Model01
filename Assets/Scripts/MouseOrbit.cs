@@ -6,7 +6,9 @@ public class MouseOrbit : MonoBehaviour {
     public Transform target;
 
 
-    public float distancia = 50;
+    public float distancia = 60;
+    public float distanciaMax = 80;
+    public float distanciaMin = 50;
     private float lastDist = 0;
 
 
@@ -42,7 +44,7 @@ public class MouseOrbit : MonoBehaviour {
 
         if (target && camaraActiva)
         {
-            if (Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer)
+            if (Application.platform != RuntimePlatform.Android || Application.platform != RuntimePlatform.IPhonePlayer)
             {
                 if (Input.GetMouseButton(0))
                 {
@@ -53,8 +55,10 @@ public class MouseOrbit : MonoBehaviour {
 
                 Quaternion rotation = Quaternion.Euler(y, x, 0);
                 Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distancia) + target.position;
-
-                distancia = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
+                
+                var temp = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
+                distancia = Mathf.Clamp(temp, distanciaMin, distanciaMax);
+                //distancia = distancia + Input.GetAxis("Mouse ScrollWheel") * multiplicadorDistancia;
 
                 //ARREGLAR DESPLASAMIENTO LENTO
                 //transform.position = Vector3.Slerp(transform.position, position, camSpeed*Time.deltaTime);
@@ -68,9 +72,9 @@ public class MouseOrbit : MonoBehaviour {
                     //One finger touch does orbit
                     touch = Input.GetTouch(0);
 
-                    x += touch.deltaPosition.x * xSpeed * 0.02f;
+                    x += touch.position.x * xSpeed * 0.02f;
 
-                    y -= touch.deltaPosition.y * ySpeed * 0.02f;
+                    y -= touch.position.y * ySpeed * 0.02f;
 
                 }
 
