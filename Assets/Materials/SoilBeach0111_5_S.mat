@@ -43,6 +43,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _LightMap
+        second:
+          m_Texture: {fileID: 2800000, guid: 0c0f266d8c367a9438ce6f21040f1b62, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _Illum
         second:
           m_Texture: {fileID: 0}
@@ -53,13 +60,6 @@ Material:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _LightMap
-        second:
-          m_Texture: {fileID: 2800000, guid: 30854c2bb8a235e4a880270c5475d7da, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
