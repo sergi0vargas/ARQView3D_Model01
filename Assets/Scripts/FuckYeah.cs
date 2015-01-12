@@ -4,13 +4,16 @@ using System.Collections;
 public class FuckYeah : MonoBehaviour {
 
 
-    public Transform camera;
+    public Transform MainCamera;
     public Transform player;
     private bool flip = false;
+    public CameraPivotMovement cp;
+    public MouseOrbit ms;
+    private bool fpsActive = false;
 
     void Start()
     {
-        camera.gameObject.SetActive(true);
+        MainCamera.gameObject.SetActive(true);
         player.gameObject.SetActive(false);
     }
 	// Update is called once per frame
@@ -19,19 +22,43 @@ public class FuckYeah : MonoBehaviour {
         {
             Flip();
         }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            FlipCamera();
+        }
 	}
+
+    void FlipCamera()
+    {
+        if (fpsActive)
+        {
+            flip = false;
+            Flip();
+
+            cp.SetActive();
+            ms.SetActive();
+            fpsActive = !fpsActive;
+        }
+        else
+        {
+            cp.SetActive();
+            ms.SetActive();
+            fpsActive = !fpsActive;
+        }
+    }
 
     void Flip()
     {
         if (flip)
         {
-            camera.gameObject.SetActive(false);
+            MainCamera.gameObject.SetActive(false);
             player.gameObject.SetActive(true);
             flip = !flip;
         }
         else
         {
-            camera.gameObject.SetActive(true);
+            MainCamera.gameObject.SetActive(true);
             player.gameObject.SetActive(false);
             flip = !flip;
         }
